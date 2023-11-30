@@ -50,75 +50,80 @@ def generate_dataset(num_sequences, size=20, density=0.5, num_steps=10):
 
     return np.array(X), np.array(y)
 
-X_train, Y_train = generate_dataset(num_sequences=1000)
+def train_model():
+    X_train, Y_train = generate_dataset(num_sequences=1000)
 
-# Generate Test Dataset
-X_test, Y_test = generate_dataset(num_sequences=200)
+    # Generate Test Dataset
+    X_test, Y_test = generate_dataset(num_sequences=200)
 
-# Reshape and Normalize Test Data
-X_test_reshaped = X_test.reshape(200, 10, 400)
-Y_test_reshaped = Y_test.reshape(200, 10, 400)
+    # Reshape and Normalize Test Data
+    X_test_reshaped = X_test.reshape(200, 10, 400)
+    Y_test_reshaped = Y_test.reshape(200, 10, 400)
 
-# X_test_normalized = X_test_reshaped.astype('float32') / 1.0
-# Y_test_normalized = Y_test_reshaped.astype('float32') / 1.0
-
-
-# Reshape to (1000, 10, 400)
-X_train_reshaped = X_train.reshape(1000, 10, 400)
-Y_train_reshaped = Y_train.reshape(1000, 10, 400)
-
-# Normalize
-# X_train_normalized = X_train_reshaped.astype('float32') / 1.0
-# Y_train_normalized = Y_train_reshaped.astype('float32') / 1.0
-
-# Define LSTM model
-model = Sequential()
-
-model.add(LSTM(units=400, return_sequences=True, input_shape=(10, 400)))
-
-# adds 2 more layers of 20 units each and stacks
-    # since return sequence is true, output array is 3D
-model.add(LSTM(units=200, return_sequences=True))
-model.add(LSTM(units=200, return_sequences=True))
-
-# dense layer with 400 output units for each cell
-model.add(Dense(units=400, activation='sigmoid'))
-
-# will give an overview of our model 
-model.summary()
-
-"""
-compiles model
-    'binary_crossentropy': Used as a loss function for binary classification model.
-        The binary_crossentropy function computes the cross-entropy loss between true
-        labels and predicted labels.
-    'adam':stochastic gradient descent method that is based
-        on adaptive estimation of first-order and second-order moments.
-"""
-model.compile(loss='binary_crossentropy', optimizer='adam')
-
-"""
-actually begins training the model with 10 epochs
-"""
-history = model.fit(X_train_reshaped, Y_train_reshaped, epochs=10)
-
-## plot results in a graph
-plt.plot(history.history['loss'])
-plt.title('Model Loss')
-plt.ylabel('Loss')
-plt.xlabel('Epoch')
-plt.show()
-
-"""
-calculates model accuracy
-"""
-trainScore = model.evaluate(X_train_reshaped, Y_train_reshaped, verbose=0)
-print('Train Score: %.2f MSE (%.2f RMSE)' % (trainScore, math.sqrt(trainScore)))
-testScore = model.evaluate(X_test_reshaped, Y_test_reshaped, verbose=0)
-print('Test Score: %.2f MSE (%.2f RMSE)' % (testScore, math.sqrt(testScore)))
+    # X_test_normalized = X_test_reshaped.astype('float32') / 1.0
+    # Y_test_normalized = Y_test_reshaped.astype('float32') / 1.0
 
 
+    # Reshape to (1000, 10, 400)
+    X_train_reshaped = X_train.reshape(1000, 10, 400)
+    Y_train_reshaped = Y_train.reshape(1000, 10, 400)
 
+    # Normalize
+    # X_train_normalized = X_train_reshaped.astype('float32') / 1.0
+    # Y_train_normalized = Y_train_reshaped.astype('float32') / 1.0
+
+    # Define LSTM model
+    model = Sequential()
+
+    model.add(LSTM(units=400, return_sequences=True, input_shape=(10, 400)))
+
+    # adds 2 more layers of 20 units each and stacks
+        # since return sequence is true, output array is 3D
+    model.add(LSTM(units=200, return_sequences=True))
+    model.add(LSTM(units=200, return_sequences=True))
+
+    # dense layer with 400 output units for each cell
+    model.add(Dense(units=400, activation='sigmoid'))
+
+    # will give an overview of our model 
+    model.summary()
+
+    """
+    compiles model
+        'binary_crossentropy': Used as a loss function for binary classification model.
+            The binary_crossentropy function computes the cross-entropy loss between true
+            labels and predicted labels.
+        'adam':stochastic gradient descent method that is based
+            on adaptive estimation of first-order and second-order moments.
+    """
+    model.compile(loss='binary_crossentropy', optimizer='adam')
+
+    """
+    actually begins training the model with 10 epochs
+    """
+    history = model.fit(X_train_reshaped, Y_train_reshaped, epochs=10)
+
+    ## plot results in a graph
+    plt.plot(history.history['loss'])
+    plt.title('Model Loss')
+    plt.ylabel('Loss')
+    plt.xlabel('Epoch')
+    plt.show()
+
+    """
+    calculates model accuracy
+    """
+    trainScore = model.evaluate(X_train_reshaped, Y_train_reshaped, verbose=0)
+    print('Train Score: %.2f MSE (%.2f RMSE)' % (trainScore, math.sqrt(trainScore)))
+    testScore = model.evaluate(X_test_reshaped, Y_test_reshaped, verbose=0)
+    print('Test Score: %.2f MSE (%.2f RMSE)' % (testScore, math.sqrt(testScore)))
+
+    #save the model
+    model.save('LSTM')
+
+
+train_model()
+loaded_model = tf.keras.models.load_model('LSTM')
 """
 Eventually we will want to implement this to see how model
 predicts output after training
