@@ -443,9 +443,9 @@ def layer_3_model():
     # Visualize the Initial and Predicted Sequences
     visualize_predictions(seed, binary_predictions, title='Initial and Predicted Sequences')
 
-layer_4_model()
-layer_2_model()
-layer_4v2_model()
-layer_2v2_model()
-layer_3_model()
+# layer_4_model()
+# layer_2_model()
+# layer_4v2_model()
+# layer_2v2_model()
+# layer_3_model()
 
